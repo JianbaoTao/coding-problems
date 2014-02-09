@@ -7,4 +7,14 @@ public class ListNode {
         val = x;
         next = null;
     }
+
+    public String toCommaString() {
+        ListNode p = this;
+        String result = "";
+        while( p != null ) {
+            result += "" + p.val + ",";
+            p = p.next;
+        }
+        return result;
+    }
 }

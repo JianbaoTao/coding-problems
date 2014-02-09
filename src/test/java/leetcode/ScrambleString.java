@@ -112,8 +112,6 @@ public class ScrambleString {
         s1 = "great";
         s2 = "rgtae";
         assertTrue( isScramble(s1, s2));
-
-
     }
 
 }
