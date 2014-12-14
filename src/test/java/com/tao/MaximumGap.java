@@ -33,8 +33,8 @@ public class MaximumGap {
     public int maximumGap_bucket(int[] num) {
         if (num.length < 2) return 0;
 
-        int max = findMax(num);
-        int min = findMin(num);
+        int max = findMinMax(num, 1);
+        int min = findMinMax(num, -1);
 
         int buckets = num.length - 1;
         double step = (max - min + 0.0) / buckets;
@@ -42,12 +42,11 @@ public class MaximumGap {
         // bucketize
         Map<Integer, List<Integer>> bucketMinMax = bucketize(num, min, step);
 
-        // find empty bucket
         int lastMax = bucketMinMax.get(0).size() > 1 ? bucketMinMax.get(0).get(1) : bucketMinMax.get(0).get(0);
         int maxGap = lastMax - min;
-        for (int i = 1; i < bucketMinMax.size(); i++) {
+        for (int i = 1; i < buckets; i++) {
             List<Integer> list = bucketMinMax.get(i);
-            if (list.size() > 0) {
+            if (list != null && list.size() > 0) {
                 maxGap = Math.max(maxGap, list.get(0) - lastMax);
                 lastMax = list.size() > 1 ? list.get(1) : list.get(0);
             }
@@ -57,16 +56,21 @@ public class MaximumGap {
 
     private Map<Integer, List<Integer>> bucketize(int[] num, int min, double step) {
         Map<Integer, List<Integer>> bucketMap = new HashMap<Integer, List<Integer>>();
-        initBucketMap(bucketMap, num.length - 1);
-        for (int i = 0; i < num.length; i++) {
-            int ibucket = findBucketIndex(num[i], min, step);
-            addToBucketMap(bucketMap, ibucket, num[i]);
+        for (int i:num) {
+            int ibucket = findBucketIndex(i, min, step);
+            addToBucketMap(bucketMap, ibucket, i);
         }
         return bucketMap;
     }
 
     private void addToBucketMap(Map<Integer, List<Integer>> bucketMap, int ibucket, int element) {
-        List<Integer> list = bucketMap.get(ibucket);
+        List<Integer> list;
+        if (bucketMap.containsKey(ibucket)) {
+            list = bucketMap.get(ibucket);
+        } else {
+            list = new ArrayList<Integer>();
+            bucketMap.put(ibucket, list);
+        }
         if (list.isEmpty()) {
             list.add(element);
         } else if (list.size() == 1) {
@@ -89,26 +93,56 @@ public class MaximumGap {
         return (int)((element - 0.5 * step - min) / step);
     }
 
-    private void initBucketMap(Map<Integer, List<Integer>> bucketMap, int size) {
-        for (int i = 0; i < size; i++) {
-            bucketMap.put(i, new ArrayList<Integer>());
+    private int findMinMax(int[] num, int flag) {
+        int output = num[0];
+        for (int i:num) {
+            if (flag < 0) {
+                output = Math.min(output, i);
+            } else {
+                output = Math.max(output, i);
+            }
         }
+        return output;
     }
 
-    private int findMin(int[] num) {
-        int min = num[0];
-        for (int i = 1; i < num.length; i++) {
-            min = Math.min(min, num[i]);
+    public int maximumGap_notMine(int[] num) {  // not my solution
+        if (num == null || num.length < 2)
+            return 0;
+        // get the max and min value of the array
+        int min = Integer.MAX_VALUE;
+        int max = Integer.MIN_VALUE;
+        for (int i:num) {
+            min = Math.min(min, i);
+            max = Math.max(max, i);
         }
-        return min;
-    }
-
-    private int findMax(int[] num) {
-        int min = num[0];
-        for (int i = 1; i < num.length; i++) {
-            min = Math.max(min, num[i]);
+        // the minimum possibale gap, ceiling of the integer division
+        int gap = (int)Math.ceil((double)(max - min)/(num.length - 1));
+        int[] bucketsMIN = new int[num.length - 1]; // store the min value in that bucket
+        int[] bucketsMAX = new int[num.length - 1]; // store the max value in that bucket
+        Arrays.fill(bucketsMIN, Integer.MAX_VALUE);
+        Arrays.fill(bucketsMAX, Integer.MIN_VALUE);
+        // put numbers into buckets
+        for (int i:num) {
+            if (i == min || i == max)
+                continue;
+            int idx = (i - min) / gap; // index of the right position in the buckets
+            bucketsMIN[idx] = Math.min(i, bucketsMIN[idx]);
+            bucketsMAX[idx] = Math.max(i, bucketsMAX[idx]);
         }
-        return min;
+        // scan the buckets for the max gap
+        int maxGap = Integer.MIN_VALUE;
+        int previous = min;
+        for (int i = 0; i < num.length - 1; i++) {
+            if (bucketsMIN[i] == Integer.MAX_VALUE && bucketsMAX[i] == Integer.MIN_VALUE)
+                // empty bucket
+                continue;
+            // min value minus the previous value is the current gap
+            maxGap = Math.max(maxGap, bucketsMIN[i] - previous);
+            // update previous bucket value
+            previous = bucketsMAX[i];
+        }
+        maxGap = Math.max(maxGap, max - previous); // updata the final max value gap
+        return maxGap;
     }
 
     @Test
