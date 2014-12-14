@@ -1,4 +1,4 @@
-package com.tao;
+package leetcode;
 
 import org.junit.Test;
 
