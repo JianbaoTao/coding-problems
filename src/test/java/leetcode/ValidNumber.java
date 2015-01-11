@@ -19,7 +19,7 @@ public class ValidNumber {
         return isNumber_01(s);
     }
 
-    public boolean isNumber_01(String s) { // reference: https://github.com/leetcoders/LeetCode/blob/master/ValidNumber.h
+    public boolean isNumber_01(String s) { // reference: https://github.com/yuzhangcmu/LeetCode_algorithm/blob/master/string/IsNumber.java
         s = s.trim().toLowerCase();
         if (s.length() == 0) {
             return false;
