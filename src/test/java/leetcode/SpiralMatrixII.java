@@ -50,7 +50,7 @@ public class SpiralMatrixII {
 
     @Test
     public void test() {
-        int[][] M = generateMatrix(1);
+        int[][] M = generateMatrix(5);
         Utils.printMatrix(M);
     }
 
