@@ -12,9 +12,28 @@ public class ListNode {
         ListNode p = this;
         String result = "";
         while( p != null ) {
-            result += "" + p.val + ",";
+            if (p.next == null) {
+                result += "" + p.val;
+            } else {
+                result += "" + p.val + ",";
+            }
             p = p.next;
         }
         return result;
+    }
+
+    public static ListNode fromInts(int... ints) {
+        ListNode prev = null;
+        ListNode head = null;
+        for (int x : ints) {
+            ListNode node = new ListNode(x);
+            if (prev == null) {
+                head = node;
+            } else {
+                prev.next = node;
+            }
+            prev = node;
+        }
+        return head;
     }
 }
