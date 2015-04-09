@@ -28,6 +28,9 @@ test {
 
 dependencies {
 //    compile 'org.codehaus.groovy:groovy-all:2.1.9'
+    compile 'org.apache.tika:tika-core:1.7'
+    compile 'org.apache.directory.studio:org.apache.commons.io:2.4'
+    compile 'org.apache.commons:commons-lang3:3.3.2'
     testCompile 'junit:junit:4.11'
 }
 
